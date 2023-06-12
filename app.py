@@ -40,9 +40,9 @@ def get_vectorstore_openAI(text_chunks):
 
 #embedding using instructor-xl with your local machine for free
 #you can find more details at: https://huggingface.co/hkunlp/instructor-xl
-def get_vectorstore_openAI(text_chunks):
+def get_vectorstore(text_chunks):
     embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
-    vectorstore = FAISS.from_texts(text=text_chunks, embedding=embeddings)
+    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
 def get_conversation_chain(vectorstore):
@@ -54,6 +54,16 @@ def get_conversation_chain(vectorstore):
         memory = memory
     )
     return conversation_chain
+
+def handle_userinput(user_question):
+    response = st.session_state.conversation({'question': user_question})
+    st.session_state.chat_history = response['chat_history']
+
+    for i, message in enumerate(st.session_state.chat_history):
+        if i%2 == 0:
+            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+        else:
+            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 def main():
     ##############################################################################
@@ -69,18 +79,17 @@ def main():
     #initial session_state in order to avoid refresh
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = None
 
     st.header("Chat based on PDF you provided :books:")
-    st.text_input("Ask a question about your documents:")
+    user_question = st.text_input("Ask a question about your documents:")
 
-    # Define the image paths
-    human_image = Image.open('human.png')
-    robot_image = Image.open('robot.png')
+    if user_question:
+        handle_userinput(user_question)
 
 # Define the templates
 
-    st.write(user_template.replace("{{MSG}}", 'Hello, I am a human'), unsafe_allow_html=True)
-    st.write(bot_template.replace("{{MSG}}",'Hello, I am a robot'), unsafe_allow_html=True)
     with st.sidebar:
         st.subheader("Your PDF documents")
         pdf_docs = st.file_uploader("Upload your pdfs here and click on 'Proces'", accept_multiple_files= True)
@@ -89,15 +98,19 @@ def main():
             with st.spinner("Processing"):
                 #get pdf text
                 raw_text = get_pdf_text(pdf_docs)
+                print('raw_text is created')
 
                 #get the text chunks
                 text_chunks = get_text_chunk(raw_text)
+                print('text_chunks are generated')
 
                 #create vector store
                 vectorstore = get_vectorstore_openAI(text_chunks)
+                print('vectorstore is created')
 
                 #create converstion chain
                 st.session_state.conversation = get_conversation_chain(vectorstore)
+                print('conversation chain created')
     
 
 

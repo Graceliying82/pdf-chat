@@ -7,3 +7,4 @@ faiss-cpu==1.7.4
 huggingface-hub==0.15.1
 InstructorEmbedding==1.0.1
 sentence-transformers==2.2.2
+tiktoken==0.4.0
