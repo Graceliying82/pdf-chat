@@ -5,3 +5,5 @@ openai==0.27.8
 python-dotenv==1.0.0
 faiss-cpu==1.7.4
 huggingface-hub==0.15.1
+InstructorEmbedding==1.0.1
+sentence-transformers==2.2.2

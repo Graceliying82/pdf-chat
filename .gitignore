@@ -54,5 +54,6 @@ Thumbs.db
 etc/
 flagged/
 
-
+# pdf
+*.pdf
 You can modify this file as per your specific requirements.
