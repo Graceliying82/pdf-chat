@@ -3,47 +3,86 @@ import openai
 import os
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
-from langchain.vectorstores import FAISS
+from langchain.docstore.document import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+#from langchain.vectorstores import FAISS
+from langchain.vectorstores import Pinecone
+import pinecone
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from htmlTemplates import css, bot_template, user_template
 from PIL import Image
 
+
 def get_pdf_text(pdf_docs):
     text = ""
     for pdf in pdf_docs:
         pdf_reader = PdfReader(pdf)
-        for page in pdf_reader.pages:
-            text += page.extract_text()
+    for page in pdf_reader.pages:
+        text += page.extract_text()
     return text
 
 # documentation for CharacterTextSplitter:
 # https://python.langchain.com/en/latest/modules/indexes/text_splitters/examples/character_text_splitter.html
 def get_text_chunk(text):
-    text_splitter = CharacterTextSplitter(
-        separator="\n",
+    # use text_splitter to split it into documents list
+    text_splitter = RecursiveCharacterTextSplitter(
         chunk_size = 1000,
-        chunk_overlap = 200,
-        length_function = len
+        chunk_overlap = 0,
     )
     chunks = text_splitter.split_text(text)
-    return chunks
+    
+    # (variable) docs: List[Document]
+    docs = [Document(page_content=text) for text in chunks]
+    return docs
+
+# initialize pinecoe
+def init_pinecone():
+    pinecone.init(
+        api_key=os.getenv("PINECONE_API_KEY"),
+        environment=os.getenv("PINECONE_API_ENV")
+    )
+    #In general, indexes on the Starter (free) plan are archived as collections and deleted after 7 days of inactivity; 
+    # for indexes created by certain open source projects such as AutoGPT, indexes are archived and deleted after 1 day of inactivity. 
+    # To prevent this, you can send any API request to Pinecone and the counter will reset.
+    index_name = 'pdfchat'
+    if index_name not in pinecone.list_indexes():
+        # we create a new index
+        pinecone.create_index(name=index_name, dimension=1536, metric="euclidean")
+        print(f"create a new index {index_name}")
+    else:
+        print(f"{index_name} index existed. skip creating.")
+    return index_name
+
+def connect_to_pinecone():
+    pinecone.init(
+        api_key=os.getenv("PINECONE_API_KEY"),
+        environment=os.getenv("PINECONE_API_ENV")
+    )
 
 #embedding using openAI embedding. Warn: This will cost you money
-def get_vectorstore_openAI(text_chunks):
+def get_vectorstore_openAI(data):
+    #default model is:text-embedding-ada-002
     embeddings = OpenAIEmbeddings()
-    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+
+#   will not to use vector in memory today. 
+#    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+
+    index_name = init_pinecone()
+    # to get more information, you can look at this page https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/pinecone
+    
+    vectorstore = Pinecone.from_documents(data, embedding=embeddings, index_name = index_name)
     return vectorstore
 
 #embedding using instructor-xl with your local machine for free
 #you can find more details at: https://huggingface.co/hkunlp/instructor-xl
-def get_vectorstore(text_chunks):
-    embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
-    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
-    return vectorstore
+# This code snippet demo how to use other model for text embedding. Will not use this for my project. But will keep this here for refenrence.
+# def get_vectorstore(text_chunks):
+#    embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
+#    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+#    return vectorstore
 
 def get_conversation_chain(vectorstore):
     llm = ChatOpenAI()
@@ -53,6 +92,7 @@ def get_conversation_chain(vectorstore):
         retriever=vectorstore.as_retriever(),
         memory = memory
     )
+    print(f"conversation_chain is {conversation_chain}")
     return conversation_chain
 
 def handle_userinput(user_question):
@@ -69,11 +109,11 @@ def main():
     ##############################################################################
     #load openai api_key from .evn
     load_dotenv()
-    #openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     
     ##############################################################################
     #set up basic page
-    st.set_page_config(page_title="Chate With multiple PDFs", page_icon=":books:")
+    st.set_page_config(page_title="Chat With multiple PDFs", page_icon=":books:")
     st.write(css, unsafe_allow_html=True)
 
     #initial session_state in order to avoid refresh
@@ -88,29 +128,32 @@ def main():
     if user_question:
         handle_userinput(user_question)
 
-# Define the templates
+
+    # Define the templates
 
     with st.sidebar:
         st.subheader("Your PDF documents")
         pdf_docs = st.file_uploader("Upload your pdfs here and click on 'Proces'", accept_multiple_files= True)
-        #if the button is pressed
+        # if the button is pressed
         if st.button("Process"):
             with st.spinner("Processing"):
                 #get pdf text
-                raw_text = get_pdf_text(pdf_docs)
-                print('raw_text is created')
+                data = get_pdf_text(pdf_docs)
+                print('pdfs have been reading into data')
 
-                #get the text chunks
-                text_chunks = get_text_chunk(raw_text)
-                print('text_chunks are generated')
-
+                #Use loader and data splitter to make a documentlist
+                doc = get_text_chunk(data)
+                print(f'text_chunks are generated and the total chucks are {len(doc)}')
+                
                 #create vector store
-                vectorstore = get_vectorstore_openAI(text_chunks)
-                print('vectorstore is created')
+                vectorstore = get_vectorstore_openAI(doc)
+    connect_to_pinecone()
+    embeddings = OpenAIEmbeddings()
+    vectorstore = Pinecone.from_existing_index(index_name='pdfchat', embedding=embeddings)
 
-                #create converstion chain
-                st.session_state.conversation = get_conversation_chain(vectorstore)
-                print('conversation chain created')
+    #create converstion chain
+    st.session_state.conversation = get_conversation_chain(vectorstore)
+    print('conversation chain created')
     
 
 
