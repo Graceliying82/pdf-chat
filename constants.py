@@ -2,9 +2,9 @@ from typing import Final
 
 from os import environ
 
-import dotenv
+from dotenv import load_dotenv
 
-dotenv.load_dotenv()
+load_dotenv()
 
 PINECONE_API_KEY: Final[str] = environ["PINECONE_API_KEY"]
 PINECONE_API_ENV: Final[str] = environ["PINECONE_API_ENV"]
