@@ -37,3 +37,20 @@ To run the PDF-Chat project using `Docker`, follow these steps:
 docker build -t pdf_chat .
 docker run -p 8599:8599 pdf_chat
 ```
+
+> For developers,
+> I recommend <br>
+> ```docker run -it -p 8599:8599 pdf_chat``` <br>
+> playaround and test your code!
+
+
+> That's it! You can now use the PDF-Chat chatbot to have conversations related to PDF documents.
+
+> Please note that you will need to replace `<repository_url>` with the actual URL of the project repository when
+> cloning
+> it.
+
+I hope this helps! Raise issues to clarify your doubts and notify bugs.
+
+
+
