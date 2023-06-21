@@ -1,7 +1,5 @@
 import streamlit as st
 import openai
-import os
-from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -13,12 +11,10 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
-from constants import OPENAI_API_KEY
+from constants import OPENAI_API_KEY, INDEX_NAME
 from htmlTemplates import css, bot_template, user_template
-from PIL import Image
 
 pinecone_db = PineconeDB()
-index_name = 'chatgpt'
 
 
 def get_pdf_text(pdf_docs):
@@ -51,10 +47,10 @@ def get_vectorstore_openAI(data):
 
     #   will not to use vector in memory today.
     #    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
-    pinecone_db.create_index(index_name)
+    pinecone_db.create_index(INDEX_NAME)
     # to get more information, you can look at this page https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/pinecone
 
-    vectorstore = Pinecone.from_documents(data, embedding=embeddings, index_name=index_name)
+    vectorstore = Pinecone.from_documents(data, embedding=embeddings, index_name=INDEX_NAME)
     return vectorstore
 
 
