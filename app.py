@@ -6,15 +6,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 # from langchain.vectorstores import FAISS
 from langchain.vectorstores import Pinecone
-from utils.database.pinecone_db import PineconeDB
+
+from utils.database import pinecone_db
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
 from constants import OPENAI_API_KEY, INDEX_NAME
 from htmlTemplates import css, bot_template, user_template
-
-pinecone_db = PineconeDB()
 
 
 def get_pdf_text(pdf_docs):
@@ -40,7 +39,8 @@ def get_text_chunk(text):
     docs = [Document(page_content=text) for text in chunks]
     return docs
 
-#embedding using openAI embedding. Warn: This will cost you money
+
+# embedding using openAI embedding. Warn: This will cost you money
 def get_vectorstore_openAI(data):
     # default model is:text-embedding-ada-002
     embeddings = OpenAIEmbeddings()
@@ -124,7 +124,7 @@ def main():
 
     embeddings = OpenAIEmbeddings()
     vectorstore = Pinecone.from_existing_index(index_name='pdfchat', embedding=embeddings)
-    #create converstion chain
+    # create converstion chain
     st.session_state.conversation = get_conversation_chain(vectorstore)
     print('conversation chain created')
 
