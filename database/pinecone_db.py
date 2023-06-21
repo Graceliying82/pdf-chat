@@ -14,7 +14,7 @@ def index_list() -> List[str]:
     return pinecone.list_indexes()
 
 
-def _setup_pinecone() -> None:
+def _setup() -> None:
     pinecone.init(
         api_key=PINECONE_API_KEY,
         environment=PINECONE_API_ENV,
@@ -33,7 +33,7 @@ def create_index(index_name: str, dimension: int = 1536, metric: str = "euclidea
         logging.warning(f"{index_name} index existed. skip creating.")
 
 
-_setup_pinecone()
+_setup()
 
 # class PineconeDB:
 #     __slots__ = []  # Perf: debug
