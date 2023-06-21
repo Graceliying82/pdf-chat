@@ -8,13 +8,15 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 #from langchain.vectorstores import FAISS
 from langchain.vectorstores import Pinecone
-import pinecone
+from utils.database.pinecone_db import PineconeDB
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from htmlTemplates import css, bot_template, user_template
 from PIL import Image
 
+pinecone_db = PineconeDB()
+index_name = 'chatgpt'
 
 def get_pdf_text(pdf_docs):
     text = ""
@@ -38,30 +40,6 @@ def get_text_chunk(text):
     docs = [Document(page_content=text) for text in chunks]
     return docs
 
-# initialize pinecoe
-def init_pinecone():
-    pinecone.init(
-        api_key=os.getenv("PINECONE_API_KEY"),
-        environment=os.getenv("PINECONE_API_ENV")
-    )
-    #In general, indexes on the Starter (free) plan are archived as collections and deleted after 7 days of inactivity; 
-    # for indexes created by certain open source projects such as AutoGPT, indexes are archived and deleted after 1 day of inactivity. 
-    # To prevent this, you can send any API request to Pinecone and the counter will reset.
-    index_name = 'pdfchat'
-    if index_name not in pinecone.list_indexes():
-        # we create a new index
-        pinecone.create_index(name=index_name, dimension=1536, metric="euclidean")
-        print(f"create a new index {index_name}")
-    else:
-        print(f"{index_name} index existed. skip creating.")
-    return index_name
-
-def connect_to_pinecone():
-    pinecone.init(
-        api_key=os.getenv("PINECONE_API_KEY"),
-        environment=os.getenv("PINECONE_API_ENV")
-    )
-
 #embedding using openAI embedding. Warn: This will cost you money
 def get_vectorstore_openAI(data):
     #default model is:text-embedding-ada-002
@@ -69,8 +47,7 @@ def get_vectorstore_openAI(data):
 
 #   will not to use vector in memory today. 
 #    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
-
-    index_name = init_pinecone()
+    pinecone_db.create_index(index_name)
     # to get more information, you can look at this page https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/pinecone
     
     vectorstore = Pinecone.from_documents(data, embedding=embeddings, index_name = index_name)
@@ -147,10 +124,10 @@ def main():
                 
                 #create vector store
                 vectorstore = get_vectorstore_openAI(doc)
-    connect_to_pinecone()
+    
+    
     embeddings = OpenAIEmbeddings()
     vectorstore = Pinecone.from_existing_index(index_name='pdfchat', embedding=embeddings)
-
     #create converstion chain
     st.session_state.conversation = get_conversation_chain(vectorstore)
     print('conversation chain created')
