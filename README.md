@@ -35,5 +35,5 @@ To run the PDF-Chat project using `Docker`, follow these steps:
 
 ```shell
 docker build -t pdf_chat .
-docker run -p 8501:8501 pdf_chat
+docker run -p 8599:8599 pdf_chat
 ```
