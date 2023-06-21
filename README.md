@@ -18,9 +18,9 @@ To run the PDF-Chat project, you need to have the following prerequisites:
 - The necessary Python packages and dependencies installed. You can find the required packages in the `requirements.txt`
   file of the project repository.
 
-## How to Run with `Python3` and `make`
+## How to Run with Python3 and `make`
 
-To run the PDF-Chat project using Python and `make`, follow these steps:
+To run the PDF-Chat project using `Python` and `make`, follow these steps:
 
 ```shell
    git clone <repository_url> pdf-chat
@@ -31,10 +31,9 @@ To run the PDF-Chat project using Python and `make`, follow these steps:
 
 ## How to Run via Docker
 
-To run the PDF-Chat project using Docker, follow these steps:
+To run the PDF-Chat project using `Docker`, follow these steps:
 
 ```shell
-docker build -t pdf-chat .
-
-
+docker build -t pdf_chat .
+docker run -p 8501:8501 pdf_chat
 ```
