@@ -1,5 +1,3 @@
 [server]
 runOnSave = true
 port = 8599
-enable_caching = true
-theme = "dark"
