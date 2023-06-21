@@ -46,11 +46,19 @@ docker run -p 8599:8599 pdf_chat
 
 > That's it! You can now use the PDF-Chat chatbot to have conversations related to PDF documents.
 
-> Please note that you will need to replace `<repository_url>` with the actual URL of the project repository when
-> cloning
-> it.
+> Please note that you will need to replace `<repository_url>` with the actual URL of this/forked repo
 
 I hope this helps! Raise issues to clarify your doubts and notify bugs.
 
+## How to Contribute
 
+We welcome contributions from the community! To get started, follow these steps:
 
+1. Fork the repository on GitHub.
+2. Clone your fork of the repository to your local machine.
+3. Create a new branch for your changes: `git checkout -b your-feature-branch`.
+4. Make your changes and commit them to your branch.
+5. Push your changes to your fork on GitHub.
+6. Open a pull request from your fork's branch to the main repository.
+
+Please make sure to follow the [Code of Conduct](./CODE_OF_CONDUCT.md) when contributing to this project.
