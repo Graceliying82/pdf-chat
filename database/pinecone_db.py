@@ -14,7 +14,7 @@ def index_list() -> List[str]:
     return pinecone.list_indexes()
 
 
-def setup_pinecone() -> None:
+def _setup_pinecone() -> None:
     pinecone.init(
         api_key=PINECONE_API_KEY,
         environment=PINECONE_API_ENV,
@@ -28,9 +28,12 @@ def create_index(index_name: str, dimension: int = 1536, metric: str = "euclidea
     if index_name not in index_list():
         # index not existed. Create a new index
         pinecone.create_index(name=index_name, dimension=dimension, metric=metric)
-        print(f"create a new index {index_name}")
+        logging.info(f"create a new index {index_name}")
     else:
-        print(f"{index_name} index existed. skip creating.")
+        logging.warning(f"{index_name} index existed. skip creating.")
+
+
+_setup_pinecone()
 
 # class PineconeDB:
 #     __slots__ = []  # Perf: debug
@@ -42,5 +45,6 @@ def create_index(index_name: str, dimension: int = 1536, metric: str = "euclidea
 #         )
 #
 #     @property
+#     @cache
 #     def index_list(self):
 #         return pinecone.list_indexes()

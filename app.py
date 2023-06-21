@@ -7,7 +7,7 @@ from langchain.embeddings import OpenAIEmbeddings
 # from langchain.vectorstores import FAISS
 from langchain.vectorstores import Pinecone
 
-from utils.database import pinecone_db
+from database import pinecone_db
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
