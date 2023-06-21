@@ -1,3 +1,5 @@
+import logging
+
 import streamlit as st
 import openai
 from PyPDF2 import PdfReader
@@ -70,7 +72,7 @@ def get_conversation_chain(vectorstore):
         retriever=vectorstore.as_retriever(),
         memory=memory
     )
-    print(f"conversation_chain is {conversation_chain}")
+    logging.info(f"conversation_chain is {conversation_chain}")
     return conversation_chain
 
 
@@ -113,11 +115,11 @@ def main():
             with st.spinner("Processing"):
                 # get pdf text
                 data = get_pdf_text(pdf_docs)
-                print('pdfs have been reading into data')
+                logging.info('pdfs have been reading into data')
 
                 # Use loader and data splitter to make a documentlist
                 doc = get_text_chunk(data)
-                print(f'text_chunks are generated and the total chucks are {len(doc)}')
+                logging.info(f'text_chunks are generated and the total chucks are {len(doc)}')
 
                 # create vector store
                 vectorstore = get_vectorstore_openAI(doc)
@@ -126,7 +128,7 @@ def main():
     vectorstore = Pinecone.from_existing_index(index_name='pdfchat', embedding=embeddings)
     # create converstion chain
     st.session_state.conversation = get_conversation_chain(vectorstore)
-    print('conversation chain created')
+    logging.info('conversation chain created')
 
 
 # to run this application, you need to run "streamlit run app.py"
