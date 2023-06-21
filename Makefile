@@ -9,10 +9,11 @@ install:
 	@ pip install streamlit
 
 run:
-	python -m streamlit run app.py
+	@python -m streamlit run app.py
 
 clean:
-	rm -rf __pycache__
+	@echo "cleaning"
+	@rm -rf __pycache__
 
 
 .PHONY: run install clean
