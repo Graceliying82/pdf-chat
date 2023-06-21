@@ -51,19 +51,18 @@ def get_vectorstore_openAI(data):
     #   will not to use vector in memory today.
     #    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     pinecone_db.create_index(INDEX_NAME)
-    # to get more information, you can look at this page https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/pinecone
+    # to get more information, you can look at this page
+    # https://python.langchain.com/docs/modules/data_connection/vectorstores/integrations/pinecone
 
     vectorstore = Pinecone.from_documents(data, embedding=embeddings, index_name=INDEX_NAME)
     return vectorstore
 
 
-# embedding using instructor-xl with your local machine for free
-# you can find more details at: https://huggingface.co/hkunlp/instructor-xl
-# This code snippet demo how to use other model for text embedding. Will not use this for my project. But will keep this here for refenrence.
-# def get_vectorstore(text_chunks):
-#    embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
-#    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
-#    return vectorstore
+# embedding using instructor-xl with your local machine for free you can find more details at:
+# https://huggingface.co/hkunlp/instructor-xl This code snippet demo how to use other model for text embedding. Will
+# not use this for my project. But will keep this here for reference. def get_vectorstore(text_chunks): embeddings =
+# HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl") vectorstore = FAISS.from_texts(texts=text_chunks,
+# embedding=embeddings) return vectorstore
 
 def get_conversation_chain(vectorstore):
     llm = ChatOpenAI()
