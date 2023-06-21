@@ -46,5 +46,5 @@ _setup()
 #
 #     @property
 #     @cache
-#     def index_list(self):
+#     def index_list(self,cached:int=0): #use any other number to get the latest
 #         return pinecone.list_indexes()
