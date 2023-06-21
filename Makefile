@@ -4,6 +4,11 @@ setup:
 	python -m venv venv
 	source venv/bin/activate
 
+
+	pre-commit autoupdate
+
+
+
 install:
 	@ pip install -r requirements.txt
 	@ pip install streamlit
