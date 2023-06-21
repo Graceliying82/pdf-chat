@@ -8,4 +8,5 @@ faiss-cpu==1.7.4
 InstructorEmbedding==1.0.1
 sentence-transformers==2.2.2
 tiktoken==0.4.0
-pinecone-client==2.2.2
+pinecone-client~=2.2.2
+icecream~=2.1.3

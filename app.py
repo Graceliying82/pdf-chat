@@ -19,6 +19,8 @@ from constants import OPENAI_API_KEY, INDEX_NAME
 from htmlTemplates import css
 from utils.inputs.pdf import parse_pdfs
 
+from icecream import ic
+
 
 # documentation for CharacterTextSplitter:
 # https://python.langchain.com/en/latest/modules/indexes/text_splitters/examples/character_text_splitter.html
@@ -64,7 +66,7 @@ def get_conversation_chain(vectorstore):
         retriever=vectorstore.as_retriever(),
         memory=memory
     )
-    logging.info(f"conversation_chain is {conversation_chain}")
+    ic(f"conversation_chain is {conversation_chain}")
     return conversation_chain
 
 
@@ -96,11 +98,11 @@ def main():
             with st.spinner("Processing"):
                 # get pdf text
                 data = parse_pdfs(pdf_docs)
-                logging.info('pdfs have been reading into data')
+                ic('pdfs have been reading into data')
 
                 # Use loader and data splitter to make a documentlist
                 doc = get_text_chunk(data)
-                logging.info(f'text_chunks are generated and the total chucks are {len(doc)}')
+                ic(f'text_chunks are generated and the total chucks are {len(doc)}')
 
                 # create vector store
                 vectorstore = get_vectorstore_openAI(doc)
@@ -109,7 +111,7 @@ def main():
     vectorstore = Pinecone.from_existing_index(index_name=INDEX_NAME, embedding=embeddings)
     # create conversation chain
     st.session_state.conversation = get_conversation_chain(vectorstore)
-    logging.info('conversation chain created')
+    ic('conversation chain created')
 
 
 # to run this application, you need to run "streamlit run app.py"

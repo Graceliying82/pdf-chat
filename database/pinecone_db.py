@@ -20,7 +20,7 @@ def _setup() -> None:
         environment=PINECONE_API_ENV,
     )
 
-    logging.info(f"pinecone-setup:{index_list()}")
+    ic(f"pinecone-setup:{index_list()}")
 
 
 def create_index(index_name: str, dimension: int = 1536, metric: str = "euclidean"):
@@ -28,7 +28,7 @@ def create_index(index_name: str, dimension: int = 1536, metric: str = "euclidea
     if index_name not in index_list():
         # index not existed. Create a new index
         pinecone.create_index(name=index_name, dimension=dimension, metric=metric)
-        logging.info(f"create a new index {index_name}")
+        ic(f"create a new index {index_name}")
     else:
         logging.warning(f"{index_name} index existed. skip creating.")
 
