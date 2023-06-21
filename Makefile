@@ -11,4 +11,8 @@ install:
 run:
 	python -m streamlit run app.py
 
-.PHONY: run install
+clean:
+	rm -rf __pycache__
+
+
+.PHONY: run install clean
