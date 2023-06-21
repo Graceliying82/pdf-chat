@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 import pinecone
+from icecream import ic
 
 from constants import PINECONE_API_KEY, PINECONE_API_ENV
 
