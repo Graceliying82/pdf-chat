@@ -39,6 +39,8 @@ def get_vectorstore_openAI(data):
     # default model is:text-embedding-ada-002
     embeddings = OpenAIEmbeddings()
 
+
+
     #   will not to use vector in memory today.
     #    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     pinecone_db.create_index(INDEX_NAME)
@@ -69,6 +71,9 @@ def get_conversation_chain(vectorstore):
 
 def main():
     openai.api_key = OPENAI_API_KEY
+
+    # Set up pinecone database
+
     # set up basic page
     st.set_page_config(page_title="Chat With multiple PDFs", page_icon=":books:")
     st.write(css, unsafe_allow_html=True)
@@ -105,6 +110,8 @@ def main():
                 vectorstore = get_vectorstore_openAI(doc)
 
     embeddings = OpenAIEmbeddings()
+    INDEX_NAME = 'pdfchat'
+    print(f'{INDEX_NAME}')
     vectorstore = Pinecone.from_existing_index(index_name=INDEX_NAME, embedding=embeddings)
     # create conversation chain
     st.session_state.conversation = get_conversation_chain(vectorstore)

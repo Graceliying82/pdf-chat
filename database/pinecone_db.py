@@ -16,6 +16,7 @@ def index_list() -> List[str]:
 
 
 def _setup() -> None:
+    print('Init pinecone database')
     pinecone.init(
         api_key=PINECONE_API_KEY,
         environment=PINECONE_API_ENV,

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from PyPDF2 import PdfReader
-from typing.io import IO
+from typing import IO
 
 
 def parse_pdfs(pdf_docs: str | IO | Path):
