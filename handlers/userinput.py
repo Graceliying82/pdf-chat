@@ -1,6 +1,6 @@
 import streamlit as st
 
-from htmlTemplates import user_template, bot_template
+from views.htmlTemplates import user_template, bot_template
 
 
 def handle_userinput(user_question):

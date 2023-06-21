@@ -1,8 +1,5 @@
-import logging
-
 import streamlit as st
 import openai
-from PyPDF2 import PdfReader
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
@@ -16,7 +13,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
 from constants import OPENAI_API_KEY, INDEX_NAME
-from htmlTemplates import css
+from views.htmlTemplates import css
 from utils.inputs.pdf import parse_pdfs
 
 from icecream import ic
