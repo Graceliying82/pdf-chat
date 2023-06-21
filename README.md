@@ -29,4 +29,12 @@ To run the PDF-Chat project using Python and `make`, follow these steps:
    make run
 ```
 
+## How to Run via Docker
 
+To run the PDF-Chat project using Docker, follow these steps:
+
+```shell
+docker build -t pdf-chat .
+
+
+```
