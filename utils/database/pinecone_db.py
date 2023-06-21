@@ -1,5 +1,7 @@
 import pinecone
-from ..load_env import get_key
+
+from constants import PINECONE_API_KEY, PINECONE_API_ENV
+
 
 class PineconeDB:
     # Index list get from database
@@ -8,8 +10,8 @@ class PineconeDB:
     def __init__(self):
         # get required API keys to init database
         pinecone.init(
-            api_key=get_key("PINECONE_API_KEY"),
-            environment=get_key("PINECONE_API_ENV")
+            api_key=PINECONE_API_KEY,
+            environment=PINECONE_API_ENV,
         )
         print('inside class PineconeDB. initializing...')
         #self.get_indexes()
