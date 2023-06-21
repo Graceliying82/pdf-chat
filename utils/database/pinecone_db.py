@@ -13,6 +13,7 @@ def setup_pinecone():
 
 
 class PineconeDB:
+    __slots__ = []  # Perf: debug
 
     def __init__(self):
         pinecone.init(
@@ -21,7 +22,7 @@ class PineconeDB:
         )
 
     @property
-    @cache  # FIX: can cause problems
+    @cache  # FIXME: can cause issues
     def index_list(self):
         return pinecone.list_indexes()
 
