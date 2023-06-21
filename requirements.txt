@@ -1,6 +1,6 @@
 streamlit==1.23.1
 PyPDF2==3.0.1
-langchain==0.0.197
+langchain==0.0.207
 openai==0.27.8
 python-dotenv==1.0.0
 faiss-cpu==1.7.4
@@ -8,4 +8,5 @@ faiss-cpu==1.7.4
 InstructorEmbedding==1.0.1
 sentence-transformers==2.2.2
 tiktoken==0.4.0
-pinecone-client==2.2.2
+pinecone-client~=2.2.2
+icecream~=2.1.3
