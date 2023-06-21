@@ -1,0 +1,4 @@
+- repo: https://github.com/facebook/usort
+  rev: v1.0.7
+  hooks:
+    - id: usort
