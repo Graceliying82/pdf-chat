@@ -9,13 +9,14 @@ from langchain.embeddings import OpenAIEmbeddings
 # from langchain.vectorstores import FAISS
 from langchain.vectorstores import Pinecone
 
+from handlers.userinput import handle_userinput
 from database import pinecone_db
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
 from constants import OPENAI_API_KEY, INDEX_NAME
-from htmlTemplates import css, bot_template, user_template
+from htmlTemplates import css
 
 
 def get_pdf_text(pdf_docs):
@@ -76,17 +77,6 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 
-def handle_userinput(user_question):
-    response = st.session_state.conversation({'question': user_question})
-    st.session_state.chat_history = response['chat_history']
-
-    for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-
-
 def main():
     openai.api_key = OPENAI_API_KEY
     # set up basic page
@@ -125,8 +115,8 @@ def main():
                 vectorstore = get_vectorstore_openAI(doc)
 
     embeddings = OpenAIEmbeddings()
-    vectorstore = Pinecone.from_existing_index(index_name='pdfchat', embedding=embeddings)
-    # create converstion chain
+    vectorstore = Pinecone.from_existing_index(index_name=INDEX_NAME, embedding=embeddings)
+    # create conversation chain
     st.session_state.conversation = get_conversation_chain(vectorstore)
     logging.info('conversation chain created')
 
