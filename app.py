@@ -17,15 +17,7 @@ from langchain.chat_models import ChatOpenAI
 
 from constants import OPENAI_API_KEY, INDEX_NAME
 from htmlTemplates import css
-
-
-def get_pdf_text(pdf_docs):
-    text = ""
-    for pdf in pdf_docs:
-        pdf_reader = PdfReader(pdf)
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-    return text
+from utils.inputs.pdf import parse_pdfs
 
 
 # documentation for CharacterTextSplitter:
@@ -103,7 +95,7 @@ def main():
         if st.button("Process"):
             with st.spinner("Processing"):
                 # get pdf text
-                data = get_pdf_text(pdf_docs)
+                data = parse_pdfs(pdf_docs)
                 logging.info('pdfs have been reading into data')
 
                 # Use loader and data splitter to make a documentlist
