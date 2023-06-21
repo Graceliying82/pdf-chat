@@ -1,8 +1,8 @@
 setup:
-	pip install venv
+	pip install venv pre-commit
+	pre-commit install
 	python -m venv venv
 	source venv/bin/activate
-
 
 install:
 	@ pip install -r requirements.txt

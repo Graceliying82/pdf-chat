@@ -2,3 +2,5 @@
   rev: v1.0.7
   hooks:
     - id: usort
+    - id: flake8
+    - id: black
